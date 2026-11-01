@@ -1,1 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0078D7">
+    <meta name="description" content="Metro Studio - Un éditeur de programmation visuelle inspiré de Scratch et de Windows Metro.">
 
+    <title>Metro Studio</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <!-- BARRE SUPÉRIEURE -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <span></span><span></span>
+                    <span></span><span></span>
+                </div>
+                <div>
+                    <div class="brand-name">METRO STUDIO</div>
+                    <div class="brand-version">CREATIVE EDITION</div>
+                </div>
+            </div>
+
+            <div class="topbar-center">
+                <span id="project-title">Nouveau projet</span>
+                <span id="save-status">● Non enregistré</span>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-button" id="home-button" title="Accueil">⌂</button>
+                <button class="icon-button" id="settings-button" title="Paramètres">⚙</button>
+            </div>
+        </header>
+
+        <!-- NAVIGATION -->
+        <aside class="sidebar">
+            <div class="sidebar-label">ESPACE DE TRAVAIL</div>
+
+            <button class="nav-item active" data-page="home">
+                <span class="nav-icon">▦</span>
+                Accueil
+            </button>
+
+            <button class="nav-item" data-page="editor">
+                <span class="nav-icon">▤</span>
+                Éditeur
+            </button>
+
+            <button class="nav-item" data-page="projects">
+                <span class="nav-icon">▧</span>
+                Mes projets
+            </button>
+
+            <div class="sidebar-label sidebar-bottom-label">APPLICATION</div>
+
+            <button class="nav-item" data-page="extensions">
+                <span class="nav-icon">✚</span>
+                Extensions
+            </button>
+
+            <button class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </button>
+
+            <div class="sidebar-footer">
+                <div class="engine-indicator" id="engine-indicator"></div>
+                <span id="engine-status">Moteur en préparation</span>
+            </div>
+        </aside>
+
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content">
+
+            <!-- ACCUEIL -->
+            <section class="page active" id="page-home">
+
+                <div class="welcome-banner">
+                    <div>
+                        <div class="eyebrow">VOTRE ESPACE CRÉATIF</div>
+                        <h1>Imaginez.<br>Programmez. Créez.</h1>
+                        <p>Bienvenue dans Metro Studio.</p>
+
+                        <button class="metro-button primary-button" id="create-project">
+                            ＋ Nouveau projet
+                        </button>
+
+                        <button class="metro-button secondary-button" id="import-project">
+                            ⇧ Importer un projet
+                        </button>
+                    </div>
+
+                    <div class="welcome-decoration">
+                        <div class="decoration-square square-one"></div>
+                        <div class="decoration-square square-two"></div>
+                        <div class="decoration-square square-three"></div>
+                        <div class="decoration-square square-four"></div>
+                    </div>
+                </div>
+
+                <div class="section-heading">
+                    <h2>Accès rapide</h2>
+                </div>
+
+                <div class="tile-grid">
+
+                    <button class="metro-tile tile-blue" id="tile-new">
+                        <span class="tile-symbol">＋</span>
+                        <span class="tile-title">Créer</span>
+                        <span class="tile-description">Commencer un projet</span>
+                    </button>
+
+                    <button class="metro-tile tile-purple" id="tile-open">
+                        <span class="tile-symbol">▤</span>
+                        <span class="tile-title">Importer</span>
+                        <span class="tile-description">Ouvrir un fichier SB3</span>
+                    </button>
+
+                    <button class="metro-tile tile-green" data-goto="projects">
+                        <span class="tile-symbol">▧</span>
+                        <span class="tile-title">Projets</span>
+                        <span class="tile-description">Votre bibliothèque</span>
+                    </button>
+
+                    <button class="metro-tile tile-orange" data-goto="extensions">
+                        <span class="tile-symbol">✚</span>
+                        <span class="tile-title">Extensions</span>
+                        <span class="tile-description">Environnement évolutif</span>
+                    </button>
+
+                </div>
+
+                <div class="section-heading">
+                    <h2>Projets récents</h2>
+                    <button class="text-button" data-goto="projects">Tout afficher →</button>
+                </div>
+
+                <div id="recent-projects" class="recent-projects">
+                    <div class="empty-state">
+                        <span class="empty-icon">▤</span>
+                        <p>Aucun projet récent.</p>
+                        <span>Créez ou importez votre premier projet.</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ÉDITEUR -->
+            <section class="page" id="page-editor">
+
+                <div class="editor-toolbar">
+                    <div class="editor-heading">
+                        <span class="eyebrow">ENVIRONNEMENT DE PROGRAMMATION</span>
+                        <h2 id="editor-project-name">Nouveau projet</h2>
+                    </div>
+
+                    <div class="editor-actions">
+                        <button class="tool-button" id="editor-import">Importer</button>
+                        <button class="tool-button" id="editor-save">Sauvegarder</button>
+                        <button class="tool-button primary-button" id="editor-export">Exporter SB3</button>
+                    </div>
+                </div>
+
+                <div class="editor-layout">
+
+                    <!-- CATÉGORIES -->
+                    <div class="block-categories">
+                        <div class="panel-heading">CATÉGORIES</div>
+
+                        <button class="category-button selected" data-category="motion">
+                            <span class="category-color motion"></span> Mouvement
+                        </button>
+
+                        <button class="category-button" data-category="looks">
+                            <span class="category-color looks"></span> Apparence
+                        </button>
+
+                        <button class="category-button" data-category="sound">
+                            <span class="category-color sound"></span> Son
+                        </button>
+
+                        <button class="category-button" data-category="events">
+                            <span class="category-color events"></span> Événements
+                        </button>
+
+                        <button class="category-button" data-category="control">
+                            <span class="category-color control"></span> Contrôle
+                        </button>
+
+                        <button class="category-button" data-category="sensing">
+                            <span class="category-color sensing"></span> Capteurs
+                        </button>
+
+                        <button class="category-button" data-category="operators">
+                            <span class="category-color operators"></span> Opérateurs
+                        </button>
+
+                        <button class="category-button" data-category="variables">
+                            <span class="category-color variables"></span> Variables
+                        </button>
+                    </div>
+
+                    <!-- PALETTE -->
+                    <div class="blocks-panel">
+                        <div class="panel-heading">
+                            <span>PALETTE DE BLOCS</span>
+                            <span class="panel-subtitle">APERÇU</span>
+                        </div>
+
+                        <div id="blocks-palette" class="blocks-palette">
+                            <div class="engine-placeholder">
+                                <div class="placeholder-icon">▤</div>
+                                <h3>Éditeur de blocs</h3>
+                                <p>Le moteur Scratch Blocks sera intégré ici.</p>
+                                <span>La palette actuelle est une prévisualisation.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ESPACE DE PROGRAMMATION -->
+                    <div class="workspace-panel">
+                        <div class="workspace-header">
+                            <span>ESPACE DE PROGRAMMATION</span>
+                            <span class="workspace-zoom">100%</span>
+                        </div>
+
+                        <div id="workspace" class="workspace">
+                            <div class="workspace-empty">
+                                <div class="workspace-empty-icon">⌘</div>
+                                <h3>Votre espace de code</h3>
+                                <p>Les scripts de votre projet apparaîtront ici après intégration du moteur Scratch.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SCÈNE -->
+                    <div class="stage-panel">
+
+                        <div class="panel-heading">SCÈNE</div>
+
+                        <div class="stage-controls">
+                            <button id="green-flag" title="Démarrer">⚑</button>
+                            <button id="stop-project" title="Arrêter">■</button>
+                            <button id="fullscreen-stage" title="Plein écran">⛶</button>
+                        </div>
+
+                        <div class="stage-container" id="stage-container">
+                            <div class="stage" id="stage">
+                                <div class="stage-placeholder">
+                                    <div class="stage-logo">MS</div>
+                                    <span>METRO STUDIO</span>
+                                    <small>APERÇU DE LA SCÈNE</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sprite-toolbar">
+                            <span>SPRITES</span>
+                            <button id="add-sprite" title="Ajouter un sprite">＋</button>
+                        </div>
+
+                        <div id="sprite-list" class="sprite-list">
+                            <div class="sprite-empty">Aucun sprite chargé</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- PROJETS -->
+            <section class="page" id="page-projects">
+                <div class="page-heading">
+                    <span class="eyebrow">BIBLIOTHÈQUE</span>
+                    <h1>Mes projets</h1>
+                    <p>Retrouvez vos projets récemment ouverts.</p>
+                </div>
+
+                <div class="project-actions">
+                    <button class="metro-button primary-button" id="projects-new">＋ Créer</button>
+                    <button class="metro-button secondary-button" id="projects-import">⇧ Importer SB3</button>
+                </div>
+
+                <div id="projects-list" class="projects-grid"></div>
+            </section>
+
+            <!-- EXTENSIONS -->
+            <section class="page" id="page-extensions">
+                <div class="page-heading">
+                    <span class="eyebrow">PERSONNALISATION</span>
+                    <h1>Extensions</h1>
+                    <p>Un espace prévu pour les futures extensions de Metro Studio.</p>
+                </div>
+
+                <div class="information-tile">
+                    <h3>Metro Extensions</h3>
+                    <p>Le système d'extensions sera développé lors d'une prochaine étape.</p>
+                </div>
+            </section>
+
+            <!-- PARAMÈTRES -->
+            <section class="page" id="page-settings">
+                <div class="page-heading">
+                    <span class="eyebrow">APPLICATION</span>
+                    <h1>Paramètres</h1>
+                    <p>Personnalisez votre environnement.</p>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Couleur d'accentuation</h3>
+
+                    <div class="accent-options">
+                        <button class="accent-choice" data-color="#0078D7" style="background:#0078D7"></button>
+                        <button class="accent-choice" data-color="#107C10" style="background:#107C10"></button>
+                        <button class="accent-choice" data-color="#8764B8" style="background:#8764B8"></button>
+                        <button class="accent-choice" data-color="#E66C25" style="background:#E66C25"></button>
+                        <button class="accent-choice" data-color="#D83B55" style="background:#D83B55"></button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Apparence</h3>
+
+                    <label class="setting-row">
+                        Thème sombre
+                        <input type="checkbox" id="dark-mode" checked>
+                    </label>
+                </div>
+
+                <div class="settings-card">
+                    <h3>À propos</h3>
+                    <p>Metro Studio — Creative Edition</p>
+                    <p>Version 0.1.0</p>
+                    <p>Projet indépendant, non affilié à Scratch.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- IMPORTATION -->
+        <input type="file" id="sb3-input" accept=".sb3,application/zip" hidden>
+
+        <!-- NOTIFICATIONS -->
+        <div id="toast-container" aria-live="polite"></div>
+
+    </div>
+
+    <script src="scratch-engine.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
